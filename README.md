@@ -1,17 +1,23 @@
-Auto rebuild of latex files based on last modification time
+# LaTeX Auto-Rebuild Tool
 
-Possible configurations:
+Automatically rebuilds LaTeX documents when source files change, based on modification time.
 
-    Alias:
-        latex_rebuild = python3 /install/directory/rebuild.py
+## Usage
 
-    Shell build:
-        latex_rebuild some_tex_file.tex -shell ./build_tex_file.sh 
+### Set up alias (add to your shell config):
+```shell
+alias latex_rebuild='python3 /install/directory/rebuild.py'
+```
 
-    Latex builds:
-        latex_rebuild some_tex_file.tex -latex pdflatex
-        latex_rebuild some_tex_file.tex -latex lualatex
-        latex_rebuild some_tex_file.tex -latex xelatex
-                                                  .
-                                                  .
-                                                  .
+### Use some custom shell script
+```shell
+latex_rebuild some_tex_file.tex -shell ./build_tex_file.sh
+```
+
+### Use standard latex compiler
+```shell
+latex_rebuild some_tex_file.tex -latex pdflatex
+latex_rebuild some_tex_file.tex -latex lualatex
+latex_rebuild some_tex_file.tex -latex xelatex
+# ... and other LaTeX engines
+```
