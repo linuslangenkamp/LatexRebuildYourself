@@ -35,7 +35,7 @@ def run_pdflatex(latex_file, command):
                                stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
     # Simulate pressing Enter for Errors
-    stdout, stderr = process.communicate(input=b"\n")
+    stdout, stderr = process.communicate(input=b"\n" * 50)
 
     print(stdout.decode())
     print(stderr.decode())
@@ -49,7 +49,7 @@ def run_shell_script(latex_file, script):
                                stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     
     # Simulate pressing Enter for Errors
-    stdout, stderr = process.communicate(input=b"\n")
+    stdout, stderr = process.communicate(input=b"\n" * 50)
 
     print(stdout.decode())
     print(stderr.decode())
