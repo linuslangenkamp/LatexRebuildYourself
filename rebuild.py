@@ -22,6 +22,8 @@ import os
 import subprocess
 import argparse
 import time
+import glob
+
 
 def get_modification_time(file):
     return os.path.getmtime(file)
@@ -47,7 +49,7 @@ def run_make(latex_file):
     os.chdir(latex_dir)
 
     # Run make command (no need to manually invoke bibtex or latexmk)
-    process = subprocess.Popen(['make'],
+    process = subprocess.Popen(['make', '-B'],
                                stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
     # Simulate pressing Enter for Errors
@@ -77,18 +79,27 @@ def run_shell_script(latex_file, script):
         pass
 
 
-def check_and_compile(latex_file, timestamp_file, command, script, make):
+def get_latest_modification_time(directory):
+    tex_files = glob.glob(os.path.join(directory, "*.tex"))
+    if not tex_files:
+        return 0
+    return max(get_modification_time(f) for f in tex_files)
+
+def check_and_compile(latex_file, timestamp_file, command, script, make, alltex):
     if os.path.exists(timestamp_file):
         with open(timestamp_file, "r") as f:
             last_mod_time = float(f.read())
     else:
         last_mod_time = 0
 
-    current_mod_time = get_modification_time(latex_file)
+    if alltex:
+        current_mod_time = get_latest_modification_time(os.path.dirname(latex_file))
+    else:
+        current_mod_time = get_modification_time(latex_file)
 
     if current_mod_time > last_mod_time:
         action = command or script or ("make" if make else None)
-        print(f"{latex_file} has been modified. Running {action}...")
+        print(f"Source files have been modified. Running {action}...")
         
         if script:
             run_shell_script(latex_file, script)
@@ -109,12 +120,13 @@ def main():
                         help="The LaTeX engine to use for compilation (pdflatex, lualatex, xelatex, tectonic).")
     parser.add_argument("-shell", help="Path to the shell script for compilation.")
     parser.add_argument("-make", action="store_true", help="Trigger make for compilation.")
+    parser.add_argument("-alltex", action="store_true", help="Check all .tex files in directory for modifications.")
 
     args = parser.parse_args()
     timestamp_file = ".build_timestamp.txt"
 
     while True:
-        check_and_compile(args.latex_file, timestamp_file, args.latex, args.shell, args.make)
+        check_and_compile(args.latex_file, timestamp_file, args.latex, args.shell, args.make, args.alltex)
         time.sleep(1)
 
 if __name__ == "__main__":
