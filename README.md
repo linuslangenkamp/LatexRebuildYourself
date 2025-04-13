@@ -1,28 +1,16 @@
-# LaTeX Auto-Rebuild Tool
+```console
+usage: rebuild.py [-h] [-latex {pdflatex,lualatex,xelatex,tectonic}] [-shell SHELL] [-make] [-alltex] latex_file
 
-Automatically rebuilds LaTeX documents when source files change, based on modification time.
+Automatically compile LaTeX file if modified.
 
-## Usage
+positional arguments:
+  latex_file            Path to the LaTeX file to be compiled
 
-### Set up alias (add to your shell config):
-```shell
-alias latex_rebuild='python3 /install/directory/rebuild.py'
-```
-
-### Use some custom shell script
-```shell
-latex_rebuild some_tex_file.tex -shell ./build_tex_file.sh
-```
-
-### Use some custom makefile (in same dir as .tex file)
-```shell
-latex_rebuild some_tex_file.tex -make
-```
-
-### Use standard latex compiler
-```shell
-latex_rebuild some_tex_file.tex -latex pdflatex
-latex_rebuild some_tex_file.tex -latex lualatex
-latex_rebuild some_tex_file.tex -latex xelatex
-# ... and other LaTeX engines
+options:
+  -h, --help            show this help message and exit
+  -latex {pdflatex,lualatex,xelatex,tectonic}
+                        The LaTeX engine to use for compilation (pdflatex, lualatex, xelatex, tectonic).
+  -shell SHELL          Path to the shell script for compilation.
+  -make                 Trigger make -B for compilation.
+  -alltex               Check all .tex files in directory for modifications.
 ```
