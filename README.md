@@ -1,5 +1,5 @@
 ```console
-usage: rebuild.py [-h] [-latex {pdflatex,lualatex,xelatex,tectonic}] [-shell SHELL] [-make] [-alltex] latex_file
+usage: rebuild.py [-h] [-latex {pdflatex,lualatex,xelatex,tectonic}] [-shell SHELL] [-make] [-alltex] [-finit] latex_file
 
 Automatically compile LaTeX file if modified.
 
@@ -11,6 +11,7 @@ options:
   -latex {pdflatex,lualatex,xelatex,tectonic}
                         The LaTeX engine to use for compilation (pdflatex, lualatex, xelatex, tectonic).
   -shell SHELL          Path to the shell script for compilation.
-  -make                 Trigger make -B for compilation.
+  -make                 Trigger make for compilation.
   -alltex               Check all .tex files in directory for modifications.
+  -finit                Forces an initial build.
 ```

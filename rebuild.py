@@ -78,27 +78,23 @@ def run_shell_script(latex_file, script):
     except:
         pass
 
-
 def get_latest_modification_time(directory):
     tex_files = glob.glob(os.path.join(directory, "*.tex"))
     if not tex_files:
         return 0
     return max(get_modification_time(f) for f in tex_files)
 
-def check_and_compile(latex_file, timestamp_file, command, script, make, alltex):
-    if os.path.exists(timestamp_file):
-        with open(timestamp_file, "r") as f:
-            last_mod_time = float(f.read())
-    else:
-        last_mod_time = 0
-
+def check_and_compile(last_mod_time, latex_file, command, script, make, alltex, finit):
     if alltex:
         current_mod_time = get_latest_modification_time(os.path.dirname(latex_file))
     else:
         current_mod_time = get_modification_time(latex_file)
 
+    if last_mod_time == 0 and not finit:
+        last_mod_time = current_mod_time
+
     if current_mod_time > last_mod_time:
-        action = command or script or ("make" if make else None)
+        action = command or script or ("make -B" if make else None)
         print(f"Source files have been modified. Running {action}...")
         
         if script:
@@ -108,10 +104,8 @@ def check_and_compile(latex_file, timestamp_file, command, script, make, alltex)
         else:
             run_pdflatex(latex_file, command)
 
-        with open(timestamp_file, "w") as f:
-            f.write(str(current_mod_time))
-    else:
-        return
+        last_mod_time = current_mod_time
+    return last_mod_time
 
 def main():
     parser = argparse.ArgumentParser(description="Automatically compile LaTeX file if modified.")
@@ -121,12 +115,15 @@ def main():
     parser.add_argument("-shell", help="Path to the shell script for compilation.")
     parser.add_argument("-make", action="store_true", help="Trigger make for compilation.")
     parser.add_argument("-alltex", action="store_true", help="Check all .tex files in directory for modifications.")
+    parser.add_argument("-finit", action="store_true", help="Forces an initial build.")
 
     args = parser.parse_args()
-    timestamp_file = ".build_timestamp.txt"
+    last_mod_time = 0
+
+    print("Latex Rebuild Yourself running...")
 
     while True:
-        check_and_compile(args.latex_file, timestamp_file, args.latex, args.shell, args.make, args.alltex)
+        last_mod_time = check_and_compile(last_mod_time, args.latex_file, args.latex, args.shell, args.make, args.alltex, args.finit)
         time.sleep(1)
 
 if __name__ == "__main__":
